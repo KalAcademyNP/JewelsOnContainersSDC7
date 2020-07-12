@@ -15,6 +15,6 @@ namespace WebMvc.ViewModels
         public PaginationInfo PaginationInfo { get; set; }
 
         public int? BrandFilterApplied { get; set; }
-        public int? TypeFilterApplied { get; set; }
+        public int? TypesFilterApplied { get; set; }
     }
 }
