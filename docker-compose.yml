@@ -32,6 +32,8 @@ services:
       dockerfile: Dockerfile
     environment:
       CatalogUrl: http://catalog
+      IdentityUrl: http://192.168.24.113:6700
+      CallBackUrl: http://localhost:6811
     ports:
       - "6811:80"
     container_name: webshop
@@ -39,6 +41,22 @@ services:
       - frontend
     depends_on:
       - catalog
+
+  tokenserver:
+    build:
+      context: .\TokenServiceApi
+      dockerfile: Dockerfile
+    image: jewels/tokenapi
+    environment:
+      Mvcclient: http://localhost:6811
+    ports:
+      - "6700:80"
+    container_name: tokenserviceapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
 
   mssqlserver:
     image: "microsoft/mssql-server-linux:latest"
