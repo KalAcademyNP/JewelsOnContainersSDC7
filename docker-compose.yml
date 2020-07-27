@@ -32,8 +32,10 @@ services:
       dockerfile: Dockerfile
     environment:
       CatalogUrl: http://catalog
+      CartUrl: http://cart
       IdentityUrl: http://192.168.24.113:6700
       CallBackUrl: http://localhost:6811
+      ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "6811:80"
     container_name: webshop
@@ -41,6 +43,8 @@ services:
       - frontend
     depends_on:
       - catalog
+      - cart
+      - tokenserver
 
   tokenserver:
     build:
