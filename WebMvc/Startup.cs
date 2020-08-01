@@ -36,6 +36,7 @@ namespace WebMvc
             services.AddTransient<ICatalogService, CatalogService>();
             services.AddTransient<IIdentityService<ApplicationUser>, IdentityService>();
             services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IOrderService, OrderService>();
 
             var identityUrl = Configuration.GetValue<string>("IdentityUrl");
             var callBackUrl = Configuration.GetValue<string>("CallBackUrl");
@@ -43,7 +44,7 @@ namespace WebMvc
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                // options.DefaultAuthenticateScheme = "Cookies";
+                options.DefaultAuthenticateScheme = "Cookies";
             })
             .AddCookie()
             .AddOpenIdConnect(options => {
@@ -61,6 +62,7 @@ namespace WebMvc
                 options.Scope.Add("profile");
                 options.Scope.Add("offline_access");
                 options.Scope.Add("basket");
+                options.Scope.Add("order");
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
 

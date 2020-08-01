@@ -33,8 +33,11 @@ services:
     environment:
       CatalogUrl: http://catalog
       CartUrl: http://cart
-      IdentityUrl: http://192.168.24.113:6700
+      IdentityUrl: http://192.168.1.34:6700
       CallBackUrl: http://localhost:6811
+      OrderUrl: http://order
+      StripePublicKey: pk_test_jZlpubvlPmcV6QJPReImelQy
+      StripePrivateKey: sk_test_bSHT9qxwjpyCOP0qdAvHLfAA
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "6811:80"
@@ -44,6 +47,7 @@ services:
     depends_on:
       - catalog
       - cart
+      - order
       - tokenserver
 
   tokenserver:
@@ -68,7 +72,7 @@ services:
       dockerfile: Dockerfile
     image: jewels/cartapi
     environment:
-      IdentityUrl: http://192.168.24.113:6700
+      IdentityUrl: http://192.168.1.34:6700
       ConnectionString: basket.data
     ports:
       - "6812:80"
@@ -79,6 +83,28 @@ services:
     depends_on:
       - tokenserver
       - basket.data
+
+  order:
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    image: jewels/orderapi
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      IdentityUrl: http://192.168.1.34:6700
+      DatabaseServer: mssqlserver
+      DatabaseName: OrdersDb
+      DatabaseUser: sa
+      DatabasePassword: ProductApi(!)
+    ports:
+      - "6813:80"
+    container_name: orderapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
+      - tokenserver
 
   mssqlserver:
     image: "microsoft/mssql-server-linux:latest"
