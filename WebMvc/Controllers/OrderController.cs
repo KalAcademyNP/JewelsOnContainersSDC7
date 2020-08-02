@@ -72,7 +72,7 @@ namespace WebMvc.Controllers
                     //required
                     Amount = (int)(order.OrderTotal * 100),
                     Currency = "usd",
-                    Source = _config["StripePublicKey"],
+                    Source = order.StripeToken,
                     //optional
                     Description = string.Format("Order Payment {0}", order.UserName),
                     ReceiptEmail = order.UserName,
@@ -91,7 +91,7 @@ namespace WebMvc.Controllers
                 }
                 catch (StripeException stripeException)
                 {
-                    _logger.LogDebug("Stripe exception " + stripeException.Message);
+                    _logger.LogError("Stripe exception " + stripeException.Message);
                     ModelState.AddModelError(string.Empty, stripeException.Message);
                     return View(frmOrder);
                 }
@@ -109,7 +109,7 @@ namespace WebMvc.Controllers
                         int orderId = await _orderSvc.CreateOrder(order);
                         //_logger.LogDebug("User {userName} finished order processing  of {orderId}.", order.UserName, order.OrderId);
 
-                        await _cartSvc.ClearCart(user);
+                        //await _cartSvc.ClearCart(user);
                         return RedirectToAction("Complete", new { id = orderId, userName = user.UserName });
                     }
 
